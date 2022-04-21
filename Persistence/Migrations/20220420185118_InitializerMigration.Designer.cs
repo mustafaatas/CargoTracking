@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220420185118_InitializerMigration")]
+    partial class InitializerMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,13 +176,11 @@ namespace Persistence.Migrations
 
                     b.HasOne("Domain.Employee", "Employee")
                         .WithMany("CargoList")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("Domain.User", "User")
-                        .WithMany("CargoList")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("KargoList")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Adress");
 
@@ -193,13 +193,11 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Dealer", "Dealer")
                         .WithMany("EmployeeList")
-                        .HasForeignKey("DealerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("DealerId");
 
                     b.HasOne("Domain.Role", "Role")
                         .WithMany("EmployeeList")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Dealer");
 
@@ -225,7 +223,7 @@ namespace Persistence.Migrations
                 {
                     b.Navigation("AdressList");
 
-                    b.Navigation("CargoList");
+                    b.Navigation("KargoList");
                 });
 #pragma warning restore 612, 618
         }

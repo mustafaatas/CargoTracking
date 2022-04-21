@@ -2,7 +2,7 @@
 
 namespace Persistence.Migrations
 {
-    public partial class Initializer : Migration
+    public partial class InitializerMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,7 +53,6 @@ namespace Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RoleId = table.Column<int>(type: "int", nullable: true),
                     DealerId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -83,16 +82,15 @@ namespace Persistence.Migrations
                     City = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     District = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId1 = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     ZIPCode = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Adresses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Adresses_Users_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Adresses_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -107,6 +105,7 @@ namespace Persistence.Migrations
                     UserId = table.Column<int>(type: "int", nullable: true),
                     EmployeeId = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<bool>(type: "bit", nullable: false),
+                    AdressId = table.Column<int>(type: "int", nullable: true),
                     SellerAdressId = table.Column<int>(type: "int", nullable: true),
                     ClientAdressId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -114,14 +113,8 @@ namespace Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Cargos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cargos_Adresses_ClientAdressId",
-                        column: x => x.ClientAdressId,
-                        principalTable: "Adresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Cargos_Adresses_SellerAdressId",
-                        column: x => x.SellerAdressId,
+                        name: "FK_Cargos_Adresses_AdressId",
+                        column: x => x.AdressId,
                         principalTable: "Adresses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -140,24 +133,19 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Adresses_UserId1",
+                name: "IX_Adresses_UserId",
                 table: "Adresses",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cargos_ClientAdressId",
+                name: "IX_Cargos_AdressId",
                 table: "Cargos",
-                column: "ClientAdressId");
+                column: "AdressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cargos_EmployeeId",
                 table: "Cargos",
                 column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cargos_SellerAdressId",
-                table: "Cargos",
-                column: "SellerAdressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cargos_UserId",

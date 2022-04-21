@@ -10,8 +10,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220420095814_Initializer")]
-    partial class Initializer
+    [Migration("20220421090111_AppliedKeyWordToClasses")]
+    partial class AppliedKeyWordToClasses
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,10 +37,7 @@ namespace Persistence.Migrations
                     b.Property<string>("District")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("UserId1")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("ZIPCode")
@@ -48,7 +45,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Adresses");
                 });
@@ -59,6 +56,9 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("AdressId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ClientAdressId")
                         .HasColumnType("int");
@@ -77,11 +77,9 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientAdressId");
+                    b.HasIndex("AdressId");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("SellerAdressId");
 
                     b.HasIndex("UserId");
 
@@ -121,9 +119,6 @@ namespace Persistence.Migrations
 
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Surname")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -168,34 +163,30 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.User", "User")
                         .WithMany("AdressList")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Cargo", b =>
                 {
-                    b.HasOne("Domain.Adress", "ClientAdress")
+                    b.HasOne("Domain.Adress", "Adress")
                         .WithMany()
-                        .HasForeignKey("ClientAdressId");
+                        .HasForeignKey("AdressId");
 
                     b.HasOne("Domain.Employee", "Employee")
                         .WithMany("CargoList")
-                        .HasForeignKey("EmployeeId");
-
-                    b.HasOne("Domain.Adress", "SellerAdress")
-                        .WithMany()
-                        .HasForeignKey("SellerAdressId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Domain.User", "User")
-                        .WithMany("KargoList")
-                        .HasForeignKey("UserId");
+                        .WithMany("CargoList")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Navigation("ClientAdress");
+                    b.Navigation("Adress");
 
                     b.Navigation("Employee");
-
-                    b.Navigation("SellerAdress");
 
                     b.Navigation("User");
                 });
@@ -204,11 +195,13 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Dealer", "Dealer")
                         .WithMany("EmployeeList")
-                        .HasForeignKey("DealerId");
+                        .HasForeignKey("DealerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Domain.Role", "Role")
                         .WithMany("EmployeeList")
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Dealer");
 
@@ -234,7 +227,7 @@ namespace Persistence.Migrations
                 {
                     b.Navigation("AdressList");
 
-                    b.Navigation("KargoList");
+                    b.Navigation("CargoList");
                 });
 #pragma warning restore 612, 618
         }

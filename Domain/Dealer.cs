@@ -9,7 +9,7 @@ namespace Domain
 {
     public class Dealer
     {
-
+        [Key]
         public int Id { get; set; }
         public List<Employee> EmployeeList { get; set; }
         public string Adress { get; set; }
