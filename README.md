@@ -1,8 +1,8 @@
 # CargoTracking
-The project is being developed for cargo developing system. Was created with n-tier architecture.
+The project is being developed for cargo tracking system. Was created with n-tier architecture on .NET Core Platform.
 
 # Technologies
-.NET 5
+.NET Core 5
 
 # Entity Classes
 #### Roles
