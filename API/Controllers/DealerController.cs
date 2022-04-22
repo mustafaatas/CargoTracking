@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using API.DTOs.DealerDto;
+using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-
+    [Route("[controller]/[action]")]
     public class DealerController : BaseApiController
     {
         private readonly DataContext context;
@@ -21,38 +22,61 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Dealer>>> GetDealers()
+        public async Task<ActionResult<List<DealerDto>>> GetDealers()
         {
-            return await context.Dealers.ToListAsync();
+            var dealerList = await context.Dealers.ToListAsync();
+            var dealerListDto = dealerList.Select(i => new DealerDto
+            {
+                Id = i.Id,
+                ZIPCode = i.ZIPCode,
+                Adress = i.Adress
+            });
+
+            return dealerListDto.ToList();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dealer>> GetDealer(int id)
+        public async Task<ActionResult<DealerDto>> GetDealer(int id)
         {
             var dealer = await context.Dealers.FindAsync(id);
             if (dealer == null) return NotFound();
 
-            return dealer;
+            var takenDealer = new DealerDto
+            {
+                Id = dealer.Id,
+                Adress = dealer.Adress,
+                ZIPCode = dealer.ZIPCode
+            };
+
+            return takenDealer;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Dealer>> CreateDealer(Dealer dealer)
+        public async Task<ActionResult<DealerDto>> CreateDealer(DealerCreateDto dealer)
         {
-            context.Dealers.Add(dealer);
+            var createdDealer = new Dealer
+            {              
+                Adress = dealer.Adress,
+                ZIPCode = dealer.ZIPCode
+            };
+
+            context.Dealers.Add(createdDealer);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDealer", new { id = dealer.Id }, dealer);
+            return CreatedAtAction("GetDealer", new { id = createdDealer.Id }, dealer);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Dealer>> UpdateDealer(int id, Dealer dealer)
+        public async Task<ActionResult<DealerDto>> UpdateDealer(int id, DealerUpdateDto dealer)
         {
-            if (id != dealer.Id) return BadRequest();
+            var updatedDealer = await context.Dealers.FindAsync(id);
+            updatedDealer.Adress = dealer.Adress;
 
-            context.Entry(dealer).State = EntityState.Modified;
+            if (id != dealer.Id) return BadRequest();
 
             try
             {
+                context.Entry(dealer).State = EntityState.Modified;
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -64,15 +88,21 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Dealer>> DeleteDealer(int id)
+        public async Task<ActionResult<DealerDto>> DeleteDealer(int id)
         {
             var dealer = await context.Dealers.FindAsync(id);
             if (dealer == null) return NotFound();
 
+            var deletedDealer = new DealerDto
+            {
+                Id = dealer.Id,
+                ZIPCode = dealer.ZIPCode
+            };
+
             context.Dealers.Remove(dealer);
             await context.SaveChangesAsync();
 
-            return dealer;
+            return deletedDealer;
         }
     }
 }
