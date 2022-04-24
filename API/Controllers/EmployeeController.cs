@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using API.DTOs.EmployeeDto;
+using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,39 +21,63 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Employee>>> GetEmployees()
+        public async Task<ActionResult<List<EmployeeDto>>> GetEmployees()
         {
-            return await context.Employees.ToListAsync();
+            var employeeList = await context.Employees.ToListAsync();
+            var employeeListDto = employeeList.Select(i => new EmployeeDto
+            {
+                Id = i.Id,
+                Name = i.Name,
+                RoleId = i.RoleId,
+                DealerId = i.DealerId
+            });
+            return employeeListDto.ToList();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id)
+        public async Task<ActionResult<EmployeeDto>> GetEmployee(int id)
         {
             var employee = await context.Employees.FindAsync(id);
             if (employee == null) return NotFound();
 
-            return employee;
+            var takenEmployee = new EmployeeDto
+            {
+                Id = employee.Id,
+                Name = employee.Name
+            };
+
+            return takenEmployee;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
+        public async Task<ActionResult<EmployeeDto>> CreateEmployee(EmployeeCreateDto employee)
         {
-            context.Employees.Add(employee);
+            var createdEmployee = new Employee
+            {
+                Name = employee.Name,
+                RoleId = employee.RoleId,
+                DealerId = employee.DealerId
+            };
+
+            context.Employees.Add(createdEmployee);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+            return CreatedAtAction("GetEmployee", new { id = createdEmployee.Id }, employee);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Employee>> UpdateEmployee(int id, Employee employee)
+        public async Task<ActionResult<EmployeeDto>> UpdateEmployee(int id, Employee employee)
         {
-            if (id != employee.Id) return BadRequest();
+            var updatedEmployee = await context.Employees.FindAsync(id);
+            updatedEmployee.RoleId = employee.RoleId;
+            updatedEmployee.DealerId = employee.DealerId;
 
-            context.Entry(employee).State = EntityState.Modified;
+            if (id != employee.Id) return BadRequest();      
 
             try
             {
                 await context.SaveChangesAsync();
+                context.Entry(employee).State = EntityState.Modified;
             }
             catch (Exception ex)
             {
@@ -63,15 +88,21 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Employee>> DeleteEmployee(int id)
+        public async Task<ActionResult<EmployeeDto>> DeleteEmployee(int id)
         {
             var employee = await context.Employees.FindAsync(id);
             if (employee == null) return NotFound();
 
+            var deletedEmployee = new EmployeeDto
+            {
+                Id = employee.Id,
+                Name = employee.Name
+            };
+
             context.Employees.Remove(employee);
             await context.SaveChangesAsync();
 
-            return employee;
+            return deletedEmployee;
         }
     }
 }

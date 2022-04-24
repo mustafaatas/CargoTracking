@@ -73,14 +73,14 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<CargoDto>> UpdateCargo(int id, CargoUpdateDto cargo)
         {
-            var UpdateCargo = await context.Cargos.FindAsync(id);
-            UpdateCargo.Status = cargo.Status;
+            var updateCargo = await context.Cargos.FindAsync(id);
+            updateCargo.Status = cargo.Status;
 
             if (id != cargo.Id) return BadRequest();
 
             try
             {
-                context.Entry(UpdateCargo).State = EntityState.Modified;
+                context.Entry(cargo).State = EntityState.Modified;
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
