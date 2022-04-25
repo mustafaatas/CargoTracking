@@ -48,9 +48,6 @@ namespace Persistence
                 .HasForeignKey(k => k.DealerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Adress>()
-                .HasIndex(k => k.ZIPCode).IsUnique();
-
             builder.Entity<Dealer>()
                 .HasIndex(k => k.ZIPCode).IsUnique();
         }
