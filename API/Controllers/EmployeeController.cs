@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [Route("[controller]/[action]")]
     public class EmployeeController : BaseApiController
     {
         private readonly DataContext context;

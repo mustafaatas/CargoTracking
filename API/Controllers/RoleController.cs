@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [Route("[controller]/[action]")]
     public class RoleController : BaseApiController
     {
         private readonly DataContext context;
