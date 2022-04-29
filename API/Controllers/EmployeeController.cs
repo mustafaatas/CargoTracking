@@ -14,23 +14,19 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class EmployeeController : BaseApiController
     {
-        private readonly DataContext context;
 
-        public EmployeeController(DataContext context)
-        {
-            this.context = context;
-        }
 
         [HttpGet]
         public async Task<ActionResult<List<EmployeeDto>>> GetEmployees()
         {
-            var employeeList = await context.Employees.ToListAsync();
+            var employeeList = await context.Employees.Include(i => i.Dealer).ToListAsync();
             var employeeListDto = employeeList.Select(i => new EmployeeDto
             {
                 Id = i.Id,
                 Name = i.Name,
                 RoleId = i.RoleId,
-                DealerId = i.DealerId
+                DealerId = i.DealerId,
+
             });
             return employeeListDto.ToList();
         }

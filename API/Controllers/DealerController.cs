@@ -1,4 +1,5 @@
 ﻿using API.DTOs.DealerDto;
+using Business.Abstract;
 using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,17 +15,18 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class DealerController : BaseApiController
     {
-        private readonly DataContext context;
 
-        public DealerController(DataContext context)
+        private readonly DealerGenericService _dealerGenericService;
+
+        public DealerController(DealerGenericService dealerGenericService)
         {
-            this.context = context;
+            _dealerGenericService = dealerGenericService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<DealerDto>>> GetDealers()
         {
-            var dealerList = await context.Dealers.ToListAsync();
+            var dealerList = await _dealerGenericService.GetListAsync();
             var dealerListDto = dealerList.Select(i => new DealerDto
             {
                 Id = i.Id,
@@ -98,8 +100,9 @@ namespace API.Controllers
                 Id = dealer.Id,
                 ZIPCode = dealer.ZIPCode
             };
-
-            context.Dealers.Remove(dealer);
+            dealer.IsDeleted = true;
+            dealer.DeletedDate = DateTime.Now;
+           // context.Dealers.Remove(dealer);
             await context.SaveChangesAsync();
 
             return deletedDealer;
