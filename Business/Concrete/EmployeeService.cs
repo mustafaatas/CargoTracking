@@ -1,6 +1,4 @@
 ﻿using Domain;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,36 +7,34 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    public class DealerGenericService : IGenericService<Dealer>
+    public class EmployeeService : IGenericService<Employee>
     {
-        private readonly DataContext context;
-
-        public DealerGenericService(DataContext context)
-        {
-            this.context = context;
-        }
-
-        public void Add(Dealer t)
+        public Task Add(Employee t)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(Dealer t)
+        public Task<Employee> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Dealer GetById(int id)
+        public Task Delete(Employee t)
         {
             throw new NotImplementedException();
         }
 
-        public List<Dealer> GetListAsync()
+        public Task<Employee> GetById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Dealer t)
+        public Task<List<Employee>> GetListAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Update(Employee t)
         {
             throw new NotImplementedException();
         }

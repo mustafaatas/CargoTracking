@@ -14,7 +14,7 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class EmployeeController : BaseApiController
     {
-
+        private readonly DataContext context;
 
         [HttpGet]
         public async Task<ActionResult<List<EmployeeDto>>> GetEmployees()
@@ -69,7 +69,7 @@ namespace API.Controllers
             updatedEmployee.RoleId = employee.RoleId;
             updatedEmployee.DealerId = employee.DealerId;
 
-            if (id != employee.Id) return BadRequest();      
+            if (id != employee.Id) return BadRequest();
 
             try
             {

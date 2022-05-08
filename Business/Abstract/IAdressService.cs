@@ -1,14 +1,13 @@
 ﻿using Domain;
-using Persistence.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.EntityFramework
+namespace Business.Abstract
 {
-    public class EfUserDal:GenericRepository<User>, IUserDal
+    interface IAdressService:IGenericService<Adress>
     {
     }
 }

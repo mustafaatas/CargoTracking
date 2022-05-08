@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.Abstract
+namespace Business.Abstract
 {
-    public interface IDealerDal:IGenericDal<Dealer>
+    interface IUserService:IGenericService<User>
     {
-
     }
 }

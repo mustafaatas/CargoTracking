@@ -10,9 +10,9 @@ namespace Domain.Common
     {
         public DateTime CreatedDate { get; set; }
 
-        public long CreatorUserId { get; set; }
+        public long? CreatorUserId { get; set; }
 
-        public DateTime LastModificationDate { get; set; }
+        public DateTime? LastModificationDate { get; set; }
 
     }
 }

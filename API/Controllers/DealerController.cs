@@ -15,18 +15,17 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class DealerController : BaseApiController
     {
+        private readonly DealerService _dealerService;
 
-        private readonly DealerGenericService _dealerGenericService;
-
-        public DealerController(DealerGenericService dealerGenericService)
+        public DealerController(DealerService dealerService)
         {
-            _dealerGenericService = dealerGenericService;
+            _dealerService = dealerService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<DealerDto>>> GetDealers()
         {
-            var dealerList = await _dealerGenericService.GetListAsync();
+            var dealerList = await _dealerService.GetListAsync();
             var dealerListDto = dealerList.Select(i => new DealerDto
             {
                 Id = i.Id,
@@ -40,7 +39,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DealerDto>> GetDealer(int id)
         {
-            var dealer = await context.Dealers.FindAsync(id);
+            var dealer = await _dealerService.GetById(id);
             if (dealer == null) return NotFound();
 
             var takenDealer = new DealerDto
@@ -57,33 +56,32 @@ namespace API.Controllers
         public async Task<ActionResult<DealerDto>> CreateDealer(DealerCreateDto dealer)
         {
             var createdDealer = new Dealer
-            {              
+            {
                 Adress = dealer.Adress,
                 ZIPCode = dealer.ZIPCode
             };
 
-            context.Dealers.Add(createdDealer);
-            await context.SaveChangesAsync();
+            // var createdDealer = new Dealer();
 
+            await _dealerService.Add(createdDealer);
             return CreatedAtAction("GetDealer", new { id = createdDealer.Id }, dealer);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<DealerDto>> UpdateDealer(int id, DealerUpdateDto dealer)
         {
-            var updatedDealer = await context.Dealers.FindAsync(id);
+            var updatedDealer = await _dealerService.GetById(id);
             updatedDealer.Adress = dealer.Adress;
 
             if (id != dealer.Id) return BadRequest();
 
             try
             {
-                context.Entry(dealer).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                await _dealerService.Update(updatedDealer);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
 
             return NoContent();
@@ -92,19 +90,10 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<DealerDto>> DeleteDealer(int id)
         {
-            var dealer = await context.Dealers.FindAsync(id);
+            var dealer = await _dealerService.Delete(id);
             if (dealer == null) return NotFound();
 
-            var deletedDealer = new DealerDto
-            {
-                Id = dealer.Id,
-                ZIPCode = dealer.ZIPCode
-            };
-            dealer.IsDeleted = true;
-            dealer.DeletedDate = DateTime.Now;
-           // context.Dealers.Remove(dealer);
-            await context.SaveChangesAsync();
-
+            var deletedDealer = new DealerDto();
             return deletedDealer;
         }
     }

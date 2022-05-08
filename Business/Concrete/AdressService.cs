@@ -1,35 +1,36 @@
-﻿using Domain;
+﻿using Business.Abstract;
+using Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Abstract
+namespace Business.Concrete
 {
-    public class EmployeeGenericService : IGenericService<Employee>
+    public class AdressService : IAdressService
     {
-        public void Add(Employee t)
+        public Task Add(Adress t)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(Employee t)
+        public Task<Adress> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Employee GetById(int id)
+        public Task<Adress> GetById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public List<Employee> GetListAsync()
+        public Task<List<Adress>> GetListAsync()
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Employee t)
+        public Task Update(Adress t)
         {
             throw new NotImplementedException();
         }

@@ -8,10 +8,10 @@ namespace Business.Abstract
 {
     public interface IGenericService<T>
     {
-        void Add(T t);
-        void Delete(T t);
-        void Update(T t);
-        List<T> GetListAsync();
-        T GetById(int id); 
+        Task Add(T t);
+        Task<T> Delete(int id);
+        Task Update(T t);
+        Task<List<T>> GetListAsync();
+        Task<T> GetById(int id); 
     }
 }

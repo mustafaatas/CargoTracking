@@ -25,7 +25,7 @@ namespace Persistence
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<IEFSoftDeleteEntity>().HasQueryFilter(k => !k.IsDeleted);
+            //builder.Entity<IEFSoftDeleteEntity>().HasQueryFilter(k => !k.IsDeleted);
             builder.Entity<Cargo>().HasKey(k => k.Id);
             builder.Entity<Cargo>()
                 .HasOne(k => k.User)
