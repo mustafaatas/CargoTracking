@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Business.DAOs.DealerDao;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
@@ -18,46 +19,79 @@ namespace Business.Abstract
             this.context = context;
         }
 
-        public async Task Add(Dealer dealer)
+        public async Task Add(DealerCreateDao dealer)
         {
             //var employeeList = context.Employees.Where(i => i.DealerId == 5).Include(i => i.CargoList);
             //var cargoListOfEmployeeList = employeeList.Select(i => i.Name);
             //id numarası 5 olan bayinin kargo listesindeki işçilerin isim listesi
             
-            var employeeList = context.Employees.Include(i => i.CargoList);
             dealer.CreatedDate = Convert.ToDateTime(DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
-            await context.Dealers.AddAsync(dealer);
+            var createdDealer = new Dealer()
+            {
+                Adress = dealer.Adress,
+                ZIPCode = dealer.ZIPCode,
+                CreatedDate = dealer.CreatedDate
+            };
+
+            await context.Dealers.AddAsync(createdDealer);
             await context.SaveChangesAsync();
         }
 
-        public async Task<Dealer> Delete(int id)
+        public async Task<DealerDao> Delete(int id)
         {
             var dealer = await context.Dealers.FindAsync(id);
-
             if (dealer == null) return null;
 
             dealer.IsDeleted = true;
             dealer.DeletedDate = Convert.ToDateTime(DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
-            //context.Dealers.Remove(dealer);
-            context.Remove(dealer);
+
+            var deletedDealer = new DealerDao()
+            {
+                Id = dealer.Id,
+                Adress = dealer.Adress,
+                ZIPCode = dealer.ZIPCode
+            };
+
+            context.Dealers.Remove(dealer);
             await context.SaveChangesAsync();
-            return dealer;
+            return deletedDealer;
         }
 
-        public async Task<Dealer> GetById(int id)
+        public async Task<DealerDao> GetById(int id)
         {
-            return await context.Dealers.FindAsync(id);
+            var dealer = await context.Dealers.FindAsync(id);
+            var dealerList = new DealerDao()
+            {
+                Id = dealer.Id,
+                Adress = dealer.Adress,
+                ZIPCode = dealer.ZIPCode,
+                EmployeeList = dealer.EmployeeList
+            };
+
+            return dealerList;
         }
 
-        public async Task<List<Dealer>> GetListAsync()
+        public async Task<List<DealerDao>> GetListAsync()
         {
-            return await context.Dealers.ToListAsync();
+            var dealerList = await context.Dealers.ToListAsync();
+            var dealerListDao = dealerList.Select(i => new DealerDao
+            { 
+                Id = i.Id,
+                Adress = i.Adress,
+                ZIPCode = i.ZIPCode,
+                EmployeeList = i.EmployeeList
+            });
+
+            return dealerListDao.ToList();
         }
 
-        public async Task Update(Dealer dealer)
+        public async Task Update(DealerUpdateDao dealer)
         {
-            dealer.LastModificationDate = Convert.ToDateTime(DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
-            context.Entry(dealer).State = EntityState.Modified;
+            var getDealer = await context.Dealers.FindAsync(dealer.Id);
+            getDealer.LastModificationDate = Convert.ToDateTime(DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
+            getDealer.Adress = dealer.Adress;
+
+            context.Entry(getDealer).State = EntityState.Modified;
             await context.SaveChangesAsync();
         }
     }

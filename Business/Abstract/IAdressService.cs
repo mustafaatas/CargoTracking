@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    interface IAdressService:IGenericService<Adress>
-    {
-    }
+    //interface IAdressService:IGenericService<Adress>
+    //{
+    //}
 }

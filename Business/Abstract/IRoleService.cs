@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    interface IRoleService:IGenericService<Role>
-    {
-    }
+    //interface IRoleService:IGenericService<Role>
+    //{
+    //}
 }

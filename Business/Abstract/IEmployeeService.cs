@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    interface IEmployeeService:IGenericService<Employee>
-    {
-
-    }
+    //interface IEmployeeService:IGenericService<Employee>
+    //{
+    //}
 }

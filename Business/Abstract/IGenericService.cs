@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    public interface IGenericService<T>
+    public interface IGenericService<Dao, CreateDao, UpdateDao>
     {
-        Task Add(T t);
-        Task<T> Delete(int id);
-        Task Update(T t);
-        Task<List<T>> GetListAsync();
-        Task<T> GetById(int id); 
+        Task Add(CreateDao t);
+        Task<Dao> Delete(int id);
+        Task Update(UpdateDao t);
+        Task<List<Dao>> GetListAsync();
+        Task<Dao> GetById(int id); 
     }
 }

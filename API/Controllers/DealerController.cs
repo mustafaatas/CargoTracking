@@ -1,5 +1,6 @@
 ﻿using API.DTOs.DealerDto;
 using Business.Abstract;
+using Business.DAOs.DealerDao;
 using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,23 +56,26 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<DealerDto>> CreateDealer(DealerCreateDto dealer)
         {
-            var createdDealer = new Dealer
+            var createdDealerDAO = new DealerCreateDao
             {
                 Adress = dealer.Adress,
                 ZIPCode = dealer.ZIPCode
             };
 
-            // var createdDealer = new Dealer();
-
-            await _dealerService.Add(createdDealer);
-            return CreatedAtAction("GetDealer", new { id = createdDealer.Id }, dealer);
+            await _dealerService.Add(createdDealerDAO);
+            return CreatedAtAction("GetDealer", new { id = createdDealerDAO.Id }, dealer);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<DealerDto>> UpdateDealer(int id, DealerUpdateDto dealer)
         {
-            var updatedDealer = await _dealerService.GetById(id);
-            updatedDealer.Adress = dealer.Adress;
+            //var updatedDealer = await _dealerService.GetById(id);
+            //updatedDealer.Adress = dealer.Adress;
+            var updatedDealer = new DealerUpdateDao
+            {
+                Id = id,
+                Adress = dealer.Adress
+            };
 
             if (id != dealer.Id) return BadRequest();
 
@@ -79,9 +83,9 @@ namespace API.Controllers
             {
                 await _dealerService.Update(updatedDealer);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
             return NoContent();

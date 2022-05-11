@@ -9,4 +9,12 @@
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DAOs\AdressDao\" />
+    <Folder Include="DAOs\CargoDao\" />
+    <Folder Include="DAOs\EmployeeDao\" />
+    <Folder Include="DAOs\UserDao\" />
+    <Folder Include="DAOs\RoleDao\" />
+  </ItemGroup>
+
 </Project>

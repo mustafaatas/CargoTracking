@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    interface ICargoService:IGenericService<Cargo>
-    {
-    }
+    //interface ICargoService:IGenericService<Cargo>
+    //{
+    //}
 }
