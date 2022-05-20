@@ -1,16 +1,14 @@
-﻿using Domain.Common;
+﻿using Domain;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain
+namespace Business.DAOs.CargoDao
 {
-    public class Cargo : IEntityBase, IEFSoftDeleteEntity
+    public class CargoDao
     {
-        [Key]
         public int Id { get; set; }
         public User User { get; set; }
         public int? UserId { get; set; }
@@ -20,10 +18,5 @@ namespace Domain
         public Adress Adress { get; set; }
         public int? SellerAdressId { get; set; }
         public int? ClientAdressId { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public long? CreatorUserId { get; set; }
-        public DateTime? LastModificationDate { get; set; }
-        public bool IsDeleted { get; set; }
-        public DateTime? DeletedDate { get; set; }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using API.DTOs;
 using API.DTOs.CargoDto;
+using Business.Concrete;
+using Business.DAOs.CargoDao;
 using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,17 +17,17 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class CargoController : BaseApiController
     {
-        private readonly DataContext context;
+        private readonly CargoService _cargoService;
 
-        public CargoController(DataContext context)
+        public CargoController(CargoService cargoService)
         {
-            this.context = context;
+            _cargoService = cargoService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<CargoDto>>> GetCargos()
         {
-            var cargoList = await context.Cargos.ToListAsync();
+            var cargoList = await _cargoService.GetListAsync();
             var cargoListDto = cargoList.Select(i => new CargoDto
             {
                 Id = i.Id,
@@ -42,7 +44,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CargoDto>> GetCargo(int id)
         {
-            var cargo = await context.Cargos.FindAsync(id);
+            var cargo = await _cargoService.GetById(id);
             if (cargo == null) return NotFound();
 
             var takenCargo = new CargoDto
@@ -57,31 +59,31 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<CargoDto>> CreateCargo(CargoCreateDto cargo)
         {
-            var createdCargo = new Cargo
+            var createdCargo = new CargoCreateDao
             {
                 SellerAdressId = cargo.SellerAdressId,
                 ClientAdressId = cargo.ClientAdressId,
                 Status = cargo.Status
             };
 
-            context.Cargos.Add(createdCargo);
-            await context.SaveChangesAsync();
-
+            await _cargoService.Add(createdCargo);
             return CreatedAtAction("GetCargo", new { id = createdCargo.Id }, cargo);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<CargoDto>> UpdateCargo(int id, CargoUpdateDto cargo)
         {
-            var updateCargo = await context.Cargos.FindAsync(id);
-            updateCargo.Status = cargo.Status;
+            var cargoDealer = new CargoUpdateDao
+            {
+                Id = id,
+                Status = cargo.Status
+            };
 
             if (id != cargo.Id) return BadRequest();
 
             try
             {
-                context.Entry(cargo).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                await _cargoService.Update(cargoDealer);
             }
             catch (Exception ex)
             {
@@ -94,19 +96,10 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<CargoDto>> DeleteCargo(int id)
         {
-            var cargo = await context.Cargos.FindAsync(id);
+            var cargo = await _cargoService.Delete(id);
             if (cargo == null) return NotFound();
 
-            var deletedCargo = new CargoDto
-            {
-                Id = cargo.Id,
-                SellerAdressId = cargo.SellerAdressId,
-                ClientAdressId = cargo.ClientAdressId
-            };
-
-            context.Cargos.Remove(cargo);
-            await context.SaveChangesAsync();
-
+            var deletedCargo = new CargoDto();
             return deletedCargo;
         }
     }

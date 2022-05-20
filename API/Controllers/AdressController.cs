@@ -1,6 +1,9 @@
 ﻿using API.DTOs.AdressDto;
 using API.DTOs.AdressDTO;
 using AutoMapper.Internal.Mappers;
+using Business.Abstract;
+using Business.Concrete;
+using Business.DAOs.AdressDao;
 using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,17 +19,17 @@ namespace API.Controllers
     [Route("[controller]/[action]")]
     public class AdressController : BaseApiController
     {
-        private readonly DataContext context;
+        private readonly AdressService _adressService;
 
-        public AdressController(DataContext context)
+        public AdressController(AdressService adressService)
         {
-            this.context = context;
+            _adressService = adressService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<AdressDto>>> GetAdresses()
         {
-            var adressList = await context.Adresses.ToListAsync();
+            var adressList = await _adressService.GetListAsync();
             var adresListDto = adressList.Select(i => new AdressDto
             {
                 Id = i.Id,
@@ -42,11 +45,12 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AdressDto>> GetAdress(int id)
         {
-            var adress = await context.Adresses.FindAsync(id);
+            var adress = await _adressService.GetById(id);
             if (adress == null) return NotFound();
 
             var takenAdress = new AdressDto
             {
+                Id = adress.Id,
                 City = adress.City,
                 District = adress.District,
                 Description = adress.Description,
@@ -59,7 +63,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<AdressDto>> CreateAdress(AdressCreateDto adress)
         {
-            var createdAdress = new Adress
+            var createdAdress = new AdressCreateDao
             {
                 City = adress.City,
                 District = adress.District,
@@ -67,24 +71,24 @@ namespace API.Controllers
                 ZIPCode = adress.ZIPCode
             };
 
-            context.Adresses.Add(createdAdress);
-            await context.SaveChangesAsync();
-
+            await _adressService.Add(createdAdress);
             return CreatedAtAction("GetAdress", new { id = createdAdress.Id }, adress);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<AdressDto>> UpdateAdress(int id, AdressUpdateDto adress)
         {
-            var updatedAdress = await context.Adresses.FindAsync(id);
-            updatedAdress.Description = adress.Description;
+            var adressDealer = new AdressUpdateDao
+            {
+                Id = id,
+                Description = adress.Description
+            };
 
-            if (id != updatedAdress.Id) return BadRequest();
+            if (id != adressDealer.Id) return BadRequest();
 
             try
             {
-                context.Entry(updatedAdress).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                await _adressService.Update(adressDealer);
             }
             catch (Exception ex)
             {
@@ -97,19 +101,10 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<AdressDto>> DeleteAdress(int id)
         {
-            var adress = await context.Adresses.FindAsync(id);
+            var adress = await _adressService.Delete(id);
             if (adress == null) return NotFound();
 
-            var deletedAdress = new AdressDto
-            {
-                City = adress.City,
-                District = adress.District,
-                ZIPCode = adress.ZIPCode
-            };
-
-            context.Adresses.Remove(adress);
-            await context.SaveChangesAsync();
-
+            var deletedAdress = new AdressDto();
             return deletedAdress;
         }
     }

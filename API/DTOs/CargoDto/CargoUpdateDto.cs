@@ -8,6 +8,6 @@ namespace API.DTOs.CargoDto
     public class CargoUpdateDto
     {
         public int Id { get; set; }
-        public bool Status;
+        public bool Status { get; set; }
     }
 }

@@ -1,16 +1,14 @@
-﻿using Domain.Common;
+﻿using Domain;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain
+namespace Business.DAOs.AdressDao
 {
-    public class Adress : IEntityBase, IEFSoftDeleteEntity
+    public class AdressDao
     {
-        [Key]
         public int Id { get; set; }
         public string City { get; set; }
         public string District { get; set; }
@@ -18,10 +16,5 @@ namespace Domain
         public User User { get; set; }
         public int? UserId { get; set; }
         public int ZIPCode { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public long? CreatorUserId { get; set; }
-        public DateTime? LastModificationDate { get; set; }
-        public bool IsDeleted { get; set; }
-        public DateTime? DeletedDate { get; set; }
     }
 }

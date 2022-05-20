@@ -45,12 +45,12 @@ namespace Business.Abstract
             dealer.IsDeleted = true;
             dealer.DeletedDate = Convert.ToDateTime(DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
 
-            var deletedDealer = new DealerDao()
-            {
-                Id = dealer.Id,
-                Adress = dealer.Adress,
-                ZIPCode = dealer.ZIPCode
-            };
+            var deletedDealer = new DealerDao();
+            //{
+            //    Id = dealer.Id,
+            //    Adress = dealer.Adress,
+            //    ZIPCode = dealer.ZIPCode
+            //};
 
             context.Dealers.Remove(dealer);
             await context.SaveChangesAsync();
@@ -60,7 +60,7 @@ namespace Business.Abstract
         public async Task<DealerDao> GetById(int id)
         {
             var dealer = await context.Dealers.FindAsync(id);
-            var dealerList = new DealerDao()
+            var dealerDao = new DealerDao()
             {
                 Id = dealer.Id,
                 Adress = dealer.Adress,
@@ -68,7 +68,7 @@ namespace Business.Abstract
                 EmployeeList = dealer.EmployeeList
             };
 
-            return dealerList;
+            return dealerDao;
         }
 
         public async Task<List<DealerDao>> GetListAsync()

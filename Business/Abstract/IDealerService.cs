@@ -10,6 +10,5 @@ namespace Business.Abstract
 {
     interface IDealerService:IGenericService<DealerDao, DealerCreateDao, DealerUpdateDao>
     {
-
     }
 }

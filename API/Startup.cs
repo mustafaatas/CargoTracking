@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Business.Abstract;
+using Business.Concrete;
 
 namespace API
 {
@@ -48,6 +49,9 @@ namespace API
 
 
             services.AddTransient<DealerService>();
+            services.AddTransient<AdressService>();
+            services.AddTransient<CargoService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
