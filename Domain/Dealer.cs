@@ -15,6 +15,9 @@ namespace Domain
         public List<Employee> EmployeeList { get; set; } = new List<Employee>();
         public string Adress { get; set; }
         public int ZIPCode { get; set; }
+        public string Mail { get; set; }
+        public string DetailAdress { get; set; }
+        public string PhoneNumber { get; set; }
         public DateTime CreatedDate { get; set; }
         public long? CreatorUserId { get; set; }
         public DateTime? LastModificationDate { get; set; }

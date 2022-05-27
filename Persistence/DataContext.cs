@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Common;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Persistence
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext
     {
         public DataContext(DbContextOptions options) : base(options)
         {
@@ -22,9 +23,12 @@ namespace Persistence
         public DbSet<Cargo> Cargos { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             //builder.Entity<IEFSoftDeleteEntity>().HasQueryFilter(k => !k.IsDeleted);
             builder.Entity<Cargo>().HasKey(k => k.Id);
             builder.Entity<Cargo>()
