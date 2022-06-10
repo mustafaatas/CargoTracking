@@ -2,6 +2,7 @@
 using Business.Abstract;
 using Business.DAOs.DealerDao;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+
     [Route("[controller]/[action]")]
     public class DealerController : BaseApiController
     {
@@ -23,6 +25,7 @@ namespace API.Controllers
             _dealerService = dealerService;
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpGet]
         public async Task<ActionResult<List<DealerDto>>> GetDealers()
         {

@@ -13,6 +13,7 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using API.IdentityAuth;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -22,82 +23,82 @@ namespace API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager,IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
             _configuration = configuration;
-        }     
+        }
 
         [HttpPost]
-        public async Task <IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             var userExist = await _userManager.FindByNameAsync(model.Username);
             if (userExist != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exist!" });
 
             ApplicationUser user = new ApplicationUser()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username
-            };
+            };         
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
-        }
-
-        [HttpPost]
-        public async Task <IActionResult> RegisterAdmin([FromBody] RegisterModel model)
-        {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
-            if(userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-
-            ApplicationUser user = new ApplicationUser()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
-
-            if (!await _roleManager.RoleExistsAsync("Manager"))
-                await _roleManager.CreateAsync(new IdentityRole("Manager"));
-
-            if (!await _roleManager.RoleExistsAsync("Dealer Manager"))
-                await _roleManager.CreateAsync(new IdentityRole("Dealer Manager"));
-
+            if (!await _roleManager.RoleExistsAsync("Driver"))
+                await _roleManager.CreateAsync(new IdentityRole("Driver"));
             if (!await _roleManager.RoleExistsAsync("Courier"))
                 await _roleManager.CreateAsync(new IdentityRole("Courier"));
-
-            if (await _roleManager.RoleExistsAsync("Manager"))
+            if (!await _roleManager.RoleExistsAsync("Manager"))
+                await _roleManager.CreateAsync(new IdentityRole("Manager"));
+            if (!await _roleManager.RoleExistsAsync("Dealer Manager"))
+                await _roleManager.CreateAsync(new IdentityRole("Dealer Manager"));
+            
+            bool check = true;
+            if (model.Role == "Driver")
+            {
+                await _userManager.AddToRoleAsync(user, "Driver");
+                check = false;
+            }
+            if (model.Role == "Courier")
+            {
+                await _userManager.AddToRoleAsync(user, "Courier");
+                check = false;
+            }
+            if (model.Role == "Manager")
             {
                 await _userManager.AddToRoleAsync(user, "Manager");
+                check = false;
+            }
+            if (model.Role == "Dealer Manager")
+            {
+                await _userManager.AddToRoleAsync(user, "Dealer Manager");
+                check = false;
             }
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            if(check)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Invalid role type!" });
+
+            return Ok(new Response { Status = "Success", Message = "The user created successfully!" });
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> SignIn([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await _userManager.FindByEmailAsync(model.Mail);
             if( user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
                 var authClaims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -106,11 +107,11 @@ namespace API.Controllers
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }
 
-                var authSigninKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+                var authSigninKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:ValidSecret"]));
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(3),
+                    expires: DateTime.UtcNow.AddDays(1.0),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256)
                     );
@@ -118,11 +119,27 @@ namespace API.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    expiration = token.ValidTo,
+                    userRoles = userRoles.ToList().FirstOrDefault(),
+                    mail = model.Mail
                 });
             }
 
             return Unauthorized();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            var response = new Response()
+            {
+                Message = "Logout success!",
+                Status = "Success"
+            };
+
+            return Ok(response);
         }
     }
 }

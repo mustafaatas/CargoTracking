@@ -18,6 +18,7 @@ using Business.Concrete;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using API.Models;
 using API.IdentityAuth;
@@ -44,6 +45,7 @@ namespace API
             });
 
             services.AddControllers();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x => { x.LoginPath = "http://localhost:8080/login"; });
 
             //For Entity Framework
             services.AddDbContext<DataContext>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
@@ -87,7 +89,7 @@ namespace API
             //For Identity
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
 
-            // Adding Authentication
+            //// Adding Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -103,9 +105,12 @@ namespace API
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidAudience = config["JWT:ValidAudince"],
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidAudience = config["JWT:ValidAudience"],
                         ValidIssuer = config["JWT:ValidIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Secret"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:ValidSecret"])),
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 
@@ -113,7 +118,6 @@ namespace API
             services.AddTransient<AdressService>();
             services.AddTransient<CargoService>();
             services.AddTransient<ApplicationUser>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -131,7 +135,6 @@ namespace API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
