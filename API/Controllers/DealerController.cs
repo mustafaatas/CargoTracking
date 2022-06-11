@@ -3,9 +3,11 @@ using Business.Abstract;
 using Business.DAOs.DealerDao;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Persistence;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,7 @@ namespace API.Controllers
             _dealerService = dealerService;
         }
 
+
         [Authorize(Roles = "Manager")]
         [HttpGet]
         public async Task<ActionResult<List<DealerDto>>> GetDealers()
@@ -36,10 +39,11 @@ namespace API.Controllers
                 ZIPCode = i.ZIPCode,
                 Adress = i.Adress
             });
-
+            var dealerJSON = JsonConvert.SerializeObject(dealerListDto);
             return dealerListDto.ToList();
         }
 
+        [Authorize(Roles = "Manager, Dealer Manager")]
         [HttpGet("{id}")]
         public async Task<ActionResult<DealerDto>> GetDealer(int id)
         {

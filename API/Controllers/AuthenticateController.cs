@@ -14,6 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using API.IdentityAuth;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
@@ -115,6 +116,13 @@ namespace API.Controllers
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256)
                     );
+                var json = JsonConvert.SerializeObject(Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo,
+                    userRoles = userRoles.ToList().FirstOrDefault(),
+                    mail = model.Mail
+                }));
 
                 return Ok(new
                 {
