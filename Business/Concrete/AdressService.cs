@@ -58,8 +58,7 @@ namespace Business.Concrete
                 Id = adress.Id,
                 City = adress.City,
                 District = adress.District,
-                Description = adress.Description,
-                UserId = adress.UserId                
+                Description = adress.Description          
             };
 
             return adressDao;
@@ -74,8 +73,7 @@ namespace Business.Concrete
                 City = i.City,
                 District = i.District,
                 Description = i.Description,
-                ZIPCode = i.ZIPCode,
-                UserId = i.UserId
+                ZIPCode = i.ZIPCode
             });
 
             return adressListDao.ToList();

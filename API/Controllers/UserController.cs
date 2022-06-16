@@ -23,13 +23,13 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<User>>> GetUsers()
+        public async Task<ActionResult<List<ApplicationUser>>> GetUsers()
         {
             return await context.Users.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<ApplicationUser>> GetUser(int id)
         {
             var user = await context.Users.FindAsync(id);
             if (user == null) return NotFound();
@@ -38,7 +38,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
+        public async Task<ActionResult<ApplicationUser>> CreateUser(ApplicationUser user)
         {
             context.Users.Add(user);
             await context.SaveChangesAsync();
@@ -47,7 +47,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> UpdateUser(int id, User user)
+        public async Task<ActionResult<ApplicationUser>> UpdateUser(string id, ApplicationUser user)
         {
             if (id != user.Id) return BadRequest();
 
@@ -66,7 +66,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(int id)
+        public async Task<ActionResult<ApplicationUser>> DeleteUser(int id)
         {
             var user = await context.Users.FindAsync(id);
             if (user == null) return NotFound();

@@ -24,9 +24,7 @@ namespace API.Controllers
             {
                 Id = i.Id,
                 Name = i.Name,
-                RoleId = i.RoleId,
                 DealerId = i.DealerId,
-
             });
             return employeeListDto.ToList();
         }
@@ -52,7 +50,6 @@ namespace API.Controllers
             var createdEmployee = new Employee
             {
                 Name = employee.Name,
-                RoleId = employee.RoleId,
                 DealerId = employee.DealerId
             };
 
@@ -66,7 +63,6 @@ namespace API.Controllers
         public async Task<ActionResult<EmployeeDto>> UpdateEmployee(int id, Employee employee)
         {
             var updatedEmployee = await context.Employees.FindAsync(id);
-            updatedEmployee.RoleId = employee.RoleId;
             updatedEmployee.DealerId = employee.DealerId;
 
             if (id != employee.Id) return BadRequest();

@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace API.IdentityAuth
+namespace Domain
 {
-    public class UserRoles : IdentityRole
+    public class ApplicationRole:IdentityRole
     {
+
     }
 }

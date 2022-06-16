@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    //interface IUserService:IGenericService<User>
+    //interface IUserService:IGenericService<ApplicationUsers>
     //{
     //}
 }

@@ -46,7 +46,8 @@ namespace API.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
+                DealerId = model.DealerId
             };         
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -90,6 +91,7 @@ namespace API.Controllers
             return Ok(new Response { Status = "Success", Message = "The user created successfully!" });
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
@@ -116,12 +118,13 @@ namespace API.Controllers
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256)
                     );
+
                 var json = JsonConvert.SerializeObject(Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo,
                     userRoles = userRoles.ToList().FirstOrDefault(),
-                    mail = model.Mail
+                    mail = model.Mail,
                 }));
 
                 return Ok(new
@@ -129,7 +132,8 @@ namespace API.Controllers
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo,
                     userRoles = userRoles.ToList().FirstOrDefault(),
-                    mail = model.Mail
+                    mail = model.Mail,
+                    dealerId = user.DealerId
                 });
             }
 

@@ -13,8 +13,6 @@ namespace Domain
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public Role Role { get; set; }
-        public int? RoleId { get; set; }
         public int? DealerId { get; set; }
         public Dealer Dealer { get; set; }
         public List<Cargo> CargoList { get; set; }

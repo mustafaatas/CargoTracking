@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Common;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace Persistence
 {
-    public class DataContext : IdentityDbContext
+    public class DataContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
-        public DataContext(DbContextOptions options) : base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
         }
@@ -21,9 +22,8 @@ namespace Persistence
         public DbSet<Dealer> Dealers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Cargo> Cargos { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<IdentityRole> ApplicationRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -31,11 +31,7 @@ namespace Persistence
 
             //builder.Entity<IEFSoftDeleteEntity>().HasQueryFilter(k => !k.IsDeleted);
             builder.Entity<Cargo>().HasKey(k => k.Id);
-            builder.Entity<Cargo>()
-                .HasOne(k => k.User)
-                .WithMany(k => k.CargoList)
-                .HasForeignKey(k => k.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<Cargo>()
                 .HasOne(k => k.Employee)
                 .WithMany(k => k.CargoList)
@@ -43,11 +39,7 @@ namespace Persistence
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Employee>().HasKey(k => k.Id);
-            builder.Entity<Employee>()
-                .HasOne(k => k.Role)
-                .WithMany(k => k.EmployeeList)
-                .HasForeignKey(k => k.RoleId)
-                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<Employee>()
                 .HasOne(k => k.Dealer)
                 .WithMany(k => k.EmployeeList)

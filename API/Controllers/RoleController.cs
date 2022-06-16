@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
     [Route("[controller]/[action]")]
+    [ApiController]
     public class RoleController : BaseApiController
     {
         private readonly DataContext context;
@@ -21,13 +23,18 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Role>>> GetRoles()
+        public async Task<ActionResult<List<IdentityRole>>> GetRoles()
+        {
+            return await context.Roles.ToListAsync();
+        }
+        [HttpGet]
+        public async Task<ActionResult<List<IdentityRole>>> GetUsers()
         {
             return await context.Roles.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        public async Task<ActionResult<IdentityRole>> GetRole(int id)
         {
             var role = await context.Roles.FindAsync(id);
             if (role == null) return NotFound();
@@ -36,7 +43,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Role>> CreateRole(Role role)
+        public async Task<ActionResult<IdentityRole>> CreateRole(ApplicationRole role)
         {
             context.Roles.Add(role);
             await context.SaveChangesAsync();
@@ -45,7 +52,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Role>> UpdateRole(int id, Role role)
+        public async Task<ActionResult<IdentityRole>> UpdateRole(string id, ApplicationRole role)
         {
             if(id != role.Id) return BadRequest();
 
@@ -64,7 +71,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Role>> DeleteRole(int id)
+        public async Task<ActionResult<IdentityRole>> DeleteRole(int id)
         {
             var role = await context.Roles.FindAsync(id);
             if (role == null) return NotFound();

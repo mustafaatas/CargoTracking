@@ -67,7 +67,6 @@ namespace Business.Concrete
             var cargoListDao = cargoList.Select(i => new CargoDao
             {
                 Id = i.Id,
-                UserId = i.UserId,
                 Status = i.Status,
                 EmployeeId = i.EmployeeId,
                 ClientAdressId = i.ClientAdressId,

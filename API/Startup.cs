@@ -50,8 +50,17 @@ namespace API
                 });
             });
 
+            
+
             services.AddControllers();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x => { x.LoginPath = "http://localhost:8080/login"; });
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x => { x.LoginPath = "http://localhost:8080/login"; });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(1.0);
+                options.LoginPath = "/login";
+            });
 
             //For Entity Framework
             services.AddDbContext<DataContext>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));

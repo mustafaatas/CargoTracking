@@ -9,5 +9,7 @@ namespace Domain
 {
     public class ApplicationUser:IdentityUser
     {
+        public int? DealerId { get; set; }
+        public Dealer Dealer { get; set; }
     }
 }

@@ -11,16 +11,6 @@ namespace Persistence
     {
         public static async Task SeedData(DataContext context)
         {
-            if (context.Roles.Any()) return;          
-            var roles = new List<Role>
-            {
-                new Role{Name="Kurye"},
-                new Role{Name="Şube Müdürü"},
-                new Role{Name="Şube Elemanı"}
-            };
-
-            await context.Roles.AddRangeAsync(roles);
-
             if (context.Dealers.Any()) return;
             var dealers = new List<Dealer>
             {
@@ -35,20 +25,6 @@ namespace Persistence
             };
 
             await context.Dealers.AddRangeAsync(dealers);
-
-            if (context.Users.Any()) return;
-            var users = new List<User>
-            {
-                new User{Name="Samet Güzel"},
-                new User{Name="Mehmet Tarhan"},
-                new User{Name="Oğuz Çelebi"},
-                new User{Name="Emine Adıgüzel"},
-                new User{Name="Sevinç Gök"},
-                new User{Name="Mert Çoban"},
-                new User{Name="Betül Dağ"}
-            };
-
-            await context.Users.AddRangeAsync(users);
 
             if (context.Adresses.Any()) return;
             var adresses = new List<Adress>

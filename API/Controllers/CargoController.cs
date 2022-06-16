@@ -31,7 +31,6 @@ namespace API.Controllers
             var cargoListDto = cargoList.Select(i => new CargoDto
             {
                 Id = i.Id,
-                UserId = i.UserId,
                 Status = i.Status,
                 EmployeeId = i.EmployeeId,
                 ClientAdressId = i.ClientAdressId,

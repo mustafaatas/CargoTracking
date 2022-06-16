@@ -15,8 +15,6 @@ namespace Domain
         public string City { get; set; }
         public string District { get; set; }
         public string Description { get; set; }
-        public User User { get; set; }
-        public int? UserId { get; set; }
         public int ZIPCode { get; set; }
         public DateTime CreatedDate { get; set; }
         public long? CreatorUserId { get; set; }
