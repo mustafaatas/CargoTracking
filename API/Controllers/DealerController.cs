@@ -27,8 +27,7 @@ namespace API.Controllers
             _dealerService = dealerService;
         }
 
-
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         [HttpGet]
         public async Task<ActionResult<List<DealerDto>>> GetDealers()
         {
@@ -43,7 +42,7 @@ namespace API.Controllers
             return dealerListDto.ToList();
         }
 
-        //[Authorize(Roles = "Manager, Dealer Manager")]
+        [Authorize(Roles = "Manager, Dealer Manager")]
         [HttpGet("{id}")]
         public async Task<ActionResult<DealerDto>> GetDealer(int id)
         {

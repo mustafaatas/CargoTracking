@@ -50,7 +50,7 @@ namespace API
                 });
             });
 
-            
+
 
             services.AddControllers();
             //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x => { x.LoginPath = "http://localhost:8080/login"; });

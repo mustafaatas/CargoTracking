@@ -27,11 +27,6 @@ namespace API.Controllers
         {
             return await context.Roles.ToListAsync();
         }
-        [HttpGet]
-        public async Task<ActionResult<List<IdentityRole>>> GetUsers()
-        {
-            return await context.Roles.ToListAsync();
-        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<IdentityRole>> GetRole(int id)

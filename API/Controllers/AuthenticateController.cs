@@ -133,7 +133,8 @@ namespace API.Controllers
                     expiration = token.ValidTo,
                     userRoles = userRoles.ToList().FirstOrDefault(),
                     mail = model.Mail,
-                    dealerId = user.DealerId
+                    dealerId = user.DealerId,
+                    userId = user.Id
                 });
             }
 
